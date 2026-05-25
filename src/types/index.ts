@@ -1,4 +1,4 @@
-export type UserRole = 'entrepreneur' | 'investor';
+export type UserRole = "entrepreneur" | "investor";
 
 export interface User {
   id: string;
@@ -12,10 +12,17 @@ export interface User {
 }
 
 export interface Entrepreneur extends User {
-  role: 'entrepreneur';
+  role: "entrepreneur";
   startupName: string;
   pitchSummary: string;
+  problemStatement?: string;
+  solution?: string;
+  marketOpportunity?: string;
+  competitiveAdvantage?: string;
   fundingNeeded: string;
+  valuation?: string;
+  previousFunding?: string;
+  currentFundingStage?: string;
   industry: string;
   location: string;
   foundedYear: number;
@@ -23,13 +30,21 @@ export interface Entrepreneur extends User {
 }
 
 export interface Investor extends User {
-  role: 'investor';
+  role: "investor";
   investmentInterests: string[];
   investmentStage: string[];
   portfolioCompanies: string[];
   totalInvestments: number;
   minimumInvestment: string;
   maximumInvestment: string;
+  investmentCriteria?: string[];
+  typicalInvestmentTimeline?: string;
+  investmentFocus?: {
+    label: string;
+    percentage: number;
+  }[];
+  successfulExits?: number;
+  averageROI?: string;
 }
 
 export interface Message {
@@ -53,7 +68,7 @@ export interface CollaborationRequest {
   investorId: string;
   entrepreneurId: string;
   message: string;
-  status: 'pending' | 'accepted' | 'rejected';
+  status: "pending" | "accepted" | "rejected";
   createdAt: string;
 }
 
@@ -71,7 +86,12 @@ export interface Document {
 export interface AuthContextType {
   user: User | null;
   login: (email: string, password: string, role: UserRole) => Promise<void>;
-  register: (name: string, email: string, password: string, role: UserRole) => Promise<void>;
+  register: (
+    name: string,
+    email: string,
+    password: string,
+    role: UserRole,
+  ) => Promise<void>;
   logout: () => void;
   forgotPassword: (email: string) => Promise<void>;
   resetPassword: (token: string, newPassword: string) => Promise<void>;

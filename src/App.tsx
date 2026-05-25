@@ -2,6 +2,8 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 
+import { TestBackend } from './pages/TestBackend';
+
 // Layouts
 import { DashboardLayout } from './components/layout/DashboardLayout';
 
@@ -35,6 +37,8 @@ function App() {
     <AuthProvider>
       <Router>
         <Routes>
+          <Route path="/test-backend" element={<TestBackend />} />
+
           {/* Authentication Routes */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
