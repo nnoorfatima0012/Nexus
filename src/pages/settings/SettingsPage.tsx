@@ -1,4 +1,3 @@
-
 // import React, { useState } from "react";
 // import { User, Lock, Bell, Globe, Palette, CreditCard } from "lucide-react";
 // import { Card, CardHeader, CardBody } from "../../components/ui/Card";
@@ -562,8 +561,7 @@ export const SettingsPage: React.FC = () => {
     maximumInvestment: (user as any)?.maximumInvestment || "",
 
     investmentCriteria: ((user as any)?.investmentCriteria || []).join(", "),
-    typicalInvestmentTimeline:
-      (user as any)?.typicalInvestmentTimeline || "",
+    typicalInvestmentTimeline: (user as any)?.typicalInvestmentTimeline || "",
     investmentFocus: ((user as any)?.investmentFocus || [])
       .map((item: any) => `${item.label}:${item.percentage}`)
       .join(", "),
@@ -574,7 +572,7 @@ export const SettingsPage: React.FC = () => {
   if (!user) return null;
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
 
@@ -614,21 +612,21 @@ export const SettingsPage: React.FC = () => {
           : null;
         updates.teamSize = formData.teamSize ? Number(formData.teamSize) : null;
       }
-
+      
       if (user.role === "investor") {
         updates.investmentInterests = formData.investmentInterests
           .split(",")
-          .map((item) => item.trim())
+          .map((item: string) => item.trim())
           .filter(Boolean);
 
         updates.investmentStage = formData.investmentStage
           .split(",")
-          .map((item) => item.trim())
+          .map((item: string) => item.trim())
           .filter(Boolean);
 
         updates.portfolioCompanies = formData.portfolioCompanies
           .split(",")
-          .map((item) => item.trim())
+          .map((item: string) => item.trim())
           .filter(Boolean);
 
         updates.totalInvestments = Number(formData.totalInvestments) || 0;
@@ -637,17 +635,16 @@ export const SettingsPage: React.FC = () => {
 
         updates.investmentCriteria = formData.investmentCriteria
           .split(",")
-          .map((item) => item.trim())
+          .map((item: string) => item.trim())
           .filter(Boolean);
 
-        updates.typicalInvestmentTimeline =
-          formData.typicalInvestmentTimeline;
+        updates.typicalInvestmentTimeline = formData.typicalInvestmentTimeline;
 
         updates.investmentFocus = formData.investmentFocus
           .split(",")
-          .map((item) => item.trim())
+          .map((item: string) => item.trim())
           .filter(Boolean)
-          .map((item) => {
+          .map((item: string) => {
             const [label, percentage] = item.split(":");
 
             return {
@@ -655,7 +652,7 @@ export const SettingsPage: React.FC = () => {
               percentage: Number(percentage) || 0,
             };
           })
-          .filter((item) => item.label);
+          .filter((item: { label: string; percentage: number }) => item.label);
 
         updates.successfulExits = Number(formData.successfulExits) || 0;
         updates.averageROI = formData.averageROI;
@@ -1055,8 +1052,8 @@ export const SettingsPage: React.FC = () => {
                 </div>
 
                 <p className="text-sm text-gray-500">
-                  For multiple values, separate items with commas. For investment
-                  focus, use this format: Focus Area:Percentage.
+                  For multiple values, separate items with commas. For
+                  investment focus, use this format: Focus Area:Percentage.
                 </p>
               </CardBody>
             </Card>

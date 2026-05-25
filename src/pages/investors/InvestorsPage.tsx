@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import { Search, Filter, MapPin } from 'lucide-react';
-import { Input } from '../../components/ui/Input';
-import { Card, CardHeader, CardBody } from '../../components/ui/Card';
-import { Badge } from '../../components/ui/Badge';
-import { InvestorCard } from '../../components/investor/InvestorCard';
-import { getInvestors } from '../../services/userService';
-import { Investor } from '../../types';
+import React, { useEffect, useState } from "react";
+import { Search, Filter, MapPin } from "lucide-react";
+import { Input } from "../../components/ui/Input";
+import { Card, CardHeader, CardBody } from "../../components/ui/Card";
+import { Badge } from "../../components/ui/Badge";
+import { InvestorCard } from "../../components/investor/InvestorCard";
+import { getInvestors } from "../../services/userService";
+import { Investor } from "../../types";
 
 export const InvestorsPage: React.FC = () => {
   const [investors, setInvestors] = useState<Investor[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [selectedStages, setSelectedStages] = useState<string[]>([]);
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
 
@@ -21,7 +21,7 @@ export const InvestorsPage: React.FC = () => {
         const data = await getInvestors();
         setInvestors(data.users || []);
       } catch (error) {
-        console.error('Failed to load investors:', error);
+        console.error("Failed to load investors:", error);
       } finally {
         setIsLoading(false);
       }
@@ -31,20 +31,20 @@ export const InvestorsPage: React.FC = () => {
   }, []);
 
   const allStages = Array.from(
-    new Set(investors.flatMap((i) => i.investmentStage || []))
+    new Set(investors.flatMap((i) => i.investmentStage || [])),
   );
 
   const allInterests = Array.from(
-    new Set(investors.flatMap((i) => i.investmentInterests || []))
+    new Set(investors.flatMap((i) => i.investmentInterests || [])),
   );
 
   const filteredInvestors = investors.filter((investor) => {
     const matchesSearch =
-      searchQuery === '' ||
+      searchQuery === "" ||
       investor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       investor.bio.toLowerCase().includes(searchQuery.toLowerCase()) ||
       investor.investmentInterests?.some((interest) =>
-        interest.toLowerCase().includes(searchQuery.toLowerCase())
+        interest.toLowerCase().includes(searchQuery.toLowerCase()),
       );
 
     const matchesStages =
@@ -54,7 +54,7 @@ export const InvestorsPage: React.FC = () => {
     const matchesInterests =
       selectedInterests.length === 0 ||
       investor.investmentInterests?.some((interest) =>
-        selectedInterests.includes(interest)
+        selectedInterests.includes(interest),
       );
 
     return matchesSearch && matchesStages && matchesInterests;
@@ -62,7 +62,7 @@ export const InvestorsPage: React.FC = () => {
 
   const toggleStage = (stage: string) => {
     setSelectedStages((prev) =>
-      prev.includes(stage) ? prev.filter((s) => s !== stage) : [...prev, stage]
+      prev.includes(stage) ? prev.filter((s) => s !== stage) : [...prev, stage],
     );
   };
 
@@ -70,7 +70,7 @@ export const InvestorsPage: React.FC = () => {
     setSelectedInterests((prev) =>
       prev.includes(interest)
         ? prev.filter((i) => i !== interest)
-        : [...prev, interest]
+        : [...prev, interest],
     );
   };
 
@@ -107,8 +107,8 @@ export const InvestorsPage: React.FC = () => {
                       onClick={() => toggleStage(stage)}
                       className={`block w-full text-left px-3 py-2 rounded-md text-sm ${
                         selectedStages.includes(stage)
-                          ? 'bg-primary-50 text-primary-700'
-                          : 'text-gray-700 hover:bg-gray-50'
+                          ? "bg-primary-50 text-primary-700"
+                          : "text-gray-700 hover:bg-gray-50"
                       }`}
                     >
                       {stage}
@@ -124,18 +124,23 @@ export const InvestorsPage: React.FC = () => {
 
                 <div className="flex flex-wrap gap-2">
                   {allInterests.map((interest) => (
-                    <Badge
+                    <button
                       key={interest}
-                      variant={
-                        selectedInterests.includes(interest)
-                          ? 'primary'
-                          : 'gray'
-                      }
-                      className="cursor-pointer"
+                      type="button"
                       onClick={() => toggleInterest(interest)}
+                      className="inline-flex"
                     >
-                      {interest}
-                    </Badge>
+                      <Badge
+                        variant={
+                          selectedInterests.includes(interest)
+                            ? "primary"
+                            : "gray"
+                        }
+                        className="cursor-pointer"
+                      >
+                        {interest}
+                      </Badge>
+                    </button>
                   ))}
                 </div>
               </div>
