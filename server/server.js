@@ -9,7 +9,7 @@
 // app.listen(PORT, () => {
 //   console.log(`Server running on port ${PORT}`);
 // });
-
+//server/server.js
 require("dotenv").config();
 
 const app = require("./src/app");

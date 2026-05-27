@@ -1,3 +1,4 @@
+//src/context/AuthContext.tsx
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { User, UserRole, AuthContextType } from '../types';
 import { loginUser, registerUser, getLoggedInUser } from '../services/authService';

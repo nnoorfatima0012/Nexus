@@ -1,3 +1,4 @@
+//src/pages/documents/DocumentsPage.tsx
 import React from 'react';
 import { FileText, Upload, Download, Trash2, Share2 } from 'lucide-react';
 import { Card, CardHeader, CardBody } from '../../components/ui/Card';
