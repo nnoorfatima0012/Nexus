@@ -6,19 +6,30 @@ import { Meeting } from "../../types";
 import { Button } from "../ui/Button";
 import { Badge } from "../ui/Badge";
 import { useAuth } from "../../context/AuthContext";
-import { acceptMeeting, cancelMeeting, rejectMeeting } from "../../services/meetingService";
+import {
+  acceptMeeting,
+  cancelMeeting,
+  rejectMeeting,
+} from "../../services/meetingService";
+import { useNavigate } from "react-router-dom";
 
 interface MeetingCardProps {
   meeting: Meeting;
   onUpdated: () => void;
 }
 
-export const MeetingCard: React.FC<MeetingCardProps> = ({ meeting, onUpdated }) => {
+export const MeetingCard: React.FC<MeetingCardProps> = ({
+  meeting,
+  onUpdated,
+}) => {
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   const isReceiver = meeting.requestedTo._id === user?.id;
   const otherUser =
-    meeting.requestedBy._id === user?.id ? meeting.requestedTo : meeting.requestedBy;
+    meeting.requestedBy._id === user?.id
+      ? meeting.requestedTo
+      : meeting.requestedBy;
 
   const handleAction = async (action: "accept" | "reject" | "cancel") => {
     try {
@@ -47,17 +58,19 @@ export const MeetingCard: React.FC<MeetingCardProps> = ({ meeting, onUpdated }) 
     meeting.status === "accepted"
       ? "success"
       : meeting.status === "rejected"
-      ? "error"
-      : meeting.status === "cancelled"
-      ? "warning"
-      : "secondary";
+        ? "error"
+        : meeting.status === "cancelled"
+          ? "warning"
+          : "secondary";
 
   return (
     <div className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition">
       <div className="flex justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <h3 className="text-sm font-semibold text-gray-900">{meeting.title}</h3>
+            <h3 className="text-sm font-semibold text-gray-900">
+              {meeting.title}
+            </h3>
             <Badge variant={badgeVariant as any} size="sm">
               {meeting.status}
             </Badge>
@@ -94,18 +107,30 @@ export const MeetingCard: React.FC<MeetingCardProps> = ({ meeting, onUpdated }) 
       <div className="flex flex-wrap gap-2 mt-4">
         {meeting.status === "pending" && isReceiver && (
           <>
-            <Button size="sm" variant="success" onClick={() => handleAction("accept")}>
+            <Button
+              size="sm"
+              variant="success"
+              onClick={() => handleAction("accept")}
+            >
               Accept
             </Button>
 
-            <Button size="sm" variant="error" onClick={() => handleAction("reject")}>
+            <Button
+              size="sm"
+              variant="error"
+              onClick={() => handleAction("reject")}
+            >
               Reject
             </Button>
           </>
         )}
 
         {meeting.status === "pending" && (
-          <Button size="sm" variant="outline" onClick={() => handleAction("cancel")}>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => handleAction("cancel")}
+          >
             Cancel
           </Button>
         )}
@@ -115,7 +140,7 @@ export const MeetingCard: React.FC<MeetingCardProps> = ({ meeting, onUpdated }) 
             size="sm"
             variant="primary"
             leftIcon={<Video size={16} />}
-            onClick={() => toast("Video page will be added in Commit 6")}
+            onClick={() => navigate(meeting.meetingLink)}
           >
             Join Call
           </Button>
