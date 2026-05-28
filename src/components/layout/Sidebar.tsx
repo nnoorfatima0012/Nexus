@@ -55,6 +55,7 @@ export const Sidebar: React.FC = () => {
     { to: '/notifications', icon: <Bell size={20} />, text: 'Notifications' },
     { to: '/deals', icon: <FileText size={20} />, text: 'Deals' },
     { to: '/meetings', icon: <CalendarDays size={20} />, text: 'Meetings' },
+    { to: '/documents', icon: <FileText size={20} />, text: 'Documents' },
   ];
   
   const sidebarItems = user.role === 'entrepreneur' ? entrepreneurItems : investorItems;

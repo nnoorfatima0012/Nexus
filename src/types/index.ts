@@ -96,15 +96,43 @@ export interface CollaborationRequest {
   createdAt: string;
 }
 
-export interface Document {
-  id: string;
+// export interface Document {
+//   id: string;
+//   name: string;
+//   type: string;
+//   size: string;
+//   lastModified: string;
+//   shared: boolean;
+//   url: string;
+//   ownerId: string;
+// }
+
+export interface DocumentUser {
+  _id: string;
   name: string;
-  type: string;
-  size: string;
-  lastModified: string;
-  shared: boolean;
-  url: string;
-  ownerId: string;
+  email: string;
+  role: UserRole;
+  avatarUrl: string;
+}
+
+export interface NexusDocument {
+  _id: string;
+  title: string;
+  fileName: string;
+  fileType: string;
+  fileSize: number;
+  fileUrl: string;
+  cloudinaryPublicId: string;
+  uploadedBy: DocumentUser;
+  relatedUser: DocumentUser | null;
+  version: number;
+  status: "pending" | "reviewed" | "signed" | "rejected";
+  signatureUrl: string;
+  signaturePublicId: string;
+  signedBy: DocumentUser | null;
+  signedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface AuthContextType {

@@ -12,10 +12,13 @@ const populateDocument = [
 
 const uploadBufferToCloudinary = (fileBuffer, options) => {
   return new Promise((resolve, reject) => {
-    const uploadStream = cloudinary.uploader.upload_stream(options, (error, result) => {
-      if (error) return reject(error);
-      return resolve(result);
-    });
+    const uploadStream = cloudinary.uploader.upload_stream(
+      options,
+      (error, result) => {
+        if (error) return reject(error);
+        return resolve(result);
+      },
+    );
 
     streamifier.createReadStream(fileBuffer).pipe(uploadStream);
   });
@@ -23,8 +26,6 @@ const uploadBufferToCloudinary = (fileBuffer, options) => {
 
 const uploadDocument = async (req, res) => {
   try {
-
-
     const { title, relatedUser } = req.body || {};
     const uploadedFile = req.file;
 
@@ -53,13 +54,18 @@ const uploadDocument = async (req, res) => {
       }
     }
 
+    // const result = await uploadBufferToCloudinary(uploadedFile.buffer, {
+    //   folder: "nexus/documents",
+    //   resource_type: "auto",
+    //   use_filename: true,
+    //   unique_filename: true,
+    // });
     const result = await uploadBufferToCloudinary(uploadedFile.buffer, {
       folder: "nexus/documents",
-      resource_type: "auto",
+      resource_type: "raw",
       use_filename: true,
       unique_filename: true,
     });
-
     const latestVersion = await Document.findOne({
       title,
       uploadedBy: req.user._id,
@@ -77,7 +83,9 @@ const uploadDocument = async (req, res) => {
       version: latestVersion ? latestVersion.version + 1 : 1,
     });
 
-    const populatedDocument = await Document.findById(document._id).populate(populateDocument);
+    const populatedDocument = await Document.findById(document._id).populate(
+      populateDocument,
+    );
 
     return res.status(201).json({
       success: true,
@@ -117,7 +125,9 @@ const getMyDocuments = async (req, res) => {
 
 const getDocumentById = async (req, res) => {
   try {
-    const document = await Document.findById(req.params.id).populate(populateDocument);
+    const document = await Document.findById(req.params.id).populate(
+      populateDocument,
+    );
 
     if (!document) {
       return res.status(404).json({
@@ -184,7 +194,9 @@ const updateDocumentStatus = async (req, res) => {
     document.status = status;
     await document.save();
 
-    const populatedDocument = await Document.findById(document._id).populate(populateDocument);
+    const populatedDocument = await Document.findById(document._id).populate(
+      populateDocument,
+    );
 
     return res.status(200).json({
       success: true,
@@ -244,7 +256,9 @@ const signDocument = async (req, res) => {
 
     await document.save();
 
-    const populatedDocument = await Document.findById(document._id).populate(populateDocument);
+    const populatedDocument = await Document.findById(document._id).populate(
+      populateDocument,
+    );
 
     return res.status(200).json({
       success: true,
