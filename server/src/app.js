@@ -8,6 +8,8 @@ const cookieParser = require("cookie-parser");
 const authRoutes = require("./modules/auth/auth.routes");
 const userRoutes = require("./modules/users/user.routes");
 const meetingRoutes = require("./modules/meetings/meeting.routes");
+const documentRoutes = require("./modules/documents/document.routes");
+
 const app = express();
 
 const allowedOrigins = [
@@ -45,5 +47,6 @@ app.get("/api/health", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/meetings", meetingRoutes);
+app.use("/api/documents", documentRoutes);
 
 module.exports = app;
