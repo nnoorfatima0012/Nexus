@@ -154,85 +154,192 @@ export const VideoRoom: React.FC<VideoRoomProps> = ({ roomId }) => {
     });
   };
 
+  // useEffect(() => {
+  //   const socket = getSocket();
+
+  //   socket.on("joined-room", ({ roomId }) => {
+  //     console.log("Joined room confirmed:", roomId);
+  //   });
+
+  //   socket.on("user-joined", async ({ userName }) => {
+  //     console.log("Remote user joined:", userName);
+  //     setRemoteUserConnected(true);
+    
+    
+
+  //     const peerConnection = createPeerConnection();
+  //     const offer = await peerConnection.createOffer();
+  //     await peerConnection.setLocalDescription(offer);
+
+  //     socket.emit("offer", {
+  //       roomId,
+  //       offer,
+  //     });
+  //   });
+
+
+
+  //   socket.on("offer", async ({ offer }) => {
+  //     console.log("Offer received");
+
+  //     const peerConnection = createPeerConnection();
+  //     await peerConnection.setRemoteDescription(
+  //       new RTCSessionDescription(offer),
+  //     );
+
+  //     const answer = await peerConnection.createAnswer();
+  //     await peerConnection.setLocalDescription(answer);
+
+  //     socket.emit("answer", {
+  //       roomId,
+  //       answer,
+  //     });
+  //   });
+
+  //   socket.on("answer", async ({ answer }) => {
+  //     console.log("Answer received");
+
+  //     if (peerConnectionRef.current) {
+  //       await peerConnectionRef.current.setRemoteDescription(
+  //         new RTCSessionDescription(answer),
+  //       );
+  //     }
+  //   });
+
+  //   socket.on("ice-candidate", async ({ candidate }) => {
+  //     try {
+  //       if (peerConnectionRef.current && candidate) {
+  //         await peerConnectionRef.current.addIceCandidate(
+  //           new RTCIceCandidate(candidate),
+  //         );
+  //       }
+  //     } catch (error) {
+  //       console.error("Failed to add ICE candidate", error);
+  //     }
+  //   });
+
+  //   socket.on("user-left", () => {
+  //     setRemoteUserConnected(false);
+
+  //     if (remoteVideoRef.current) {
+  //       remoteVideoRef.current.srcObject = null;
+  //     }
+
+  //     toast("Remote user left the call");
+  //   });
+
+  //   return () => {
+  //     socket.off("joined-room");
+  //     socket.off("user-joined");
+  //     socket.off("offer");
+  //     socket.off("answer");
+  //     socket.off("ice-candidate");
+  //     socket.off("user-left");
+  //   };
+  // }, [roomId]);
+
   useEffect(() => {
-    const socket = getSocket();
+  const socket = getSocket();
 
-    socket.on("joined-room", ({ roomId }) => {
-      console.log("Joined room confirmed:", roomId);
+  socket.on("joined-room", ({ roomId }) => {
+    console.log("Joined room confirmed:", roomId);
+    toast.success("Joined video room");
+  });
+
+  socket.on("join-error", ({ message }) => {
+    toast.error(message);
+
+    localStreamRef.current?.getTracks().forEach((track) => track.stop());
+    peerConnectionRef.current?.close();
+
+    localStreamRef.current = null;
+    peerConnectionRef.current = null;
+
+    if (localVideoRef.current) {
+      localVideoRef.current.srcObject = null;
+    }
+
+    if (remoteVideoRef.current) {
+      remoteVideoRef.current.srcObject = null;
+    }
+
+    setIsJoined(false);
+    setRemoteUserConnected(false);
+  });
+
+  socket.on("user-joined", async ({ userName }) => {
+    console.log("Remote user joined:", userName);
+    setRemoteUserConnected(true);
+
+    const peerConnection = createPeerConnection();
+    const offer = await peerConnection.createOffer();
+    await peerConnection.setLocalDescription(offer);
+
+    socket.emit("offer", {
+      roomId,
+      offer,
     });
+  });
 
-    socket.on("user-joined", async ({ userName }) => {
-      console.log("Remote user joined:", userName);
-      setRemoteUserConnected(true);
+  socket.on("offer", async ({ offer }) => {
+    console.log("Offer received");
 
-      const peerConnection = createPeerConnection();
-      const offer = await peerConnection.createOffer();
-      await peerConnection.setLocalDescription(offer);
+    const peerConnection = createPeerConnection();
+    await peerConnection.setRemoteDescription(
+      new RTCSessionDescription(offer),
+    );
 
-      socket.emit("offer", {
-        roomId,
-        offer,
-      });
+    const answer = await peerConnection.createAnswer();
+    await peerConnection.setLocalDescription(answer);
+
+    socket.emit("answer", {
+      roomId,
+      answer,
     });
+  });
 
-    socket.on("offer", async ({ offer }) => {
-      console.log("Offer received");
+  socket.on("answer", async ({ answer }) => {
+    console.log("Answer received");
 
-      const peerConnection = createPeerConnection();
-      await peerConnection.setRemoteDescription(
-        new RTCSessionDescription(offer),
+    if (peerConnectionRef.current) {
+      await peerConnectionRef.current.setRemoteDescription(
+        new RTCSessionDescription(answer),
       );
+    }
+  });
 
-      const answer = await peerConnection.createAnswer();
-      await peerConnection.setLocalDescription(answer);
-
-      socket.emit("answer", {
-        roomId,
-        answer,
-      });
-    });
-
-    socket.on("answer", async ({ answer }) => {
-      console.log("Answer received");
-
-      if (peerConnectionRef.current) {
-        await peerConnectionRef.current.setRemoteDescription(
-          new RTCSessionDescription(answer),
+  socket.on("ice-candidate", async ({ candidate }) => {
+    try {
+      if (peerConnectionRef.current && candidate) {
+        await peerConnectionRef.current.addIceCandidate(
+          new RTCIceCandidate(candidate),
         );
       }
-    });
+    } catch (error) {
+      console.error("Failed to add ICE candidate", error);
+    }
+  });
 
-    socket.on("ice-candidate", async ({ candidate }) => {
-      try {
-        if (peerConnectionRef.current && candidate) {
-          await peerConnectionRef.current.addIceCandidate(
-            new RTCIceCandidate(candidate),
-          );
-        }
-      } catch (error) {
-        console.error("Failed to add ICE candidate", error);
-      }
-    });
+  socket.on("user-left", () => {
+    setRemoteUserConnected(false);
 
-    socket.on("user-left", () => {
-      setRemoteUserConnected(false);
+    if (remoteVideoRef.current) {
+      remoteVideoRef.current.srcObject = null;
+    }
 
-      if (remoteVideoRef.current) {
-        remoteVideoRef.current.srcObject = null;
-      }
+    toast("Remote user left the call");
+  });
 
-      toast("Remote user left the call");
-    });
-
-    return () => {
-      socket.off("joined-room");
-      socket.off("user-joined");
-      socket.off("offer");
-      socket.off("answer");
-      socket.off("ice-candidate");
-      socket.off("user-left");
-    };
-  }, [roomId]);
+  return () => {
+    socket.off("joined-room");
+    socket.off("join-error");
+    socket.off("user-joined");
+    socket.off("offer");
+    socket.off("answer");
+    socket.off("ice-candidate");
+    socket.off("user-left");
+  };
+}, [roomId]);
 
   useEffect(() => {
     return () => {
