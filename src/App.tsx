@@ -40,6 +40,8 @@ import { ChatPage } from "./pages/chat/ChatPage";
 
 import { MeetingsPage } from "./pages/meetings/MeetingsPage";
 
+import { VideoCallPage } from "./pages/video/VideoCallPage";
+
 function App() {
   return (
     <AuthProvider>
@@ -100,6 +102,9 @@ function App() {
             <Route index element={<MeetingsPage />} />
           </Route>
 
+          <Route path="/video/:roomId" element={<DashboardLayout />}>
+            <Route index element={<VideoCallPage />} />
+          </Route>
           {/* Chat Routes */}
           <Route path="/chat" element={<DashboardLayout />}>
             <Route index element={<ChatPage />} />
