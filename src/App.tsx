@@ -35,6 +35,10 @@ import { SettingsPage } from "./pages/settings/SettingsPage";
 import { HelpPage } from "./pages/help/HelpPage";
 import { DealsPage } from "./pages/deals/DealsPage";
 
+import { PaymentsPage } from "./pages/payments/PaymentsPage";
+import { PaymentSuccessPage } from "./pages/payments/PaymentSuccessPage";
+import { PaymentCancelPage } from "./pages/payments/PaymentCancelPage";
+
 // Chat Pages
 import { ChatPage } from "./pages/chat/ChatPage";
 
@@ -74,6 +78,17 @@ function App() {
             <Route index element={<EntrepreneursPage />} />
           </Route>
 
+          <Route path="/payments" element={<DashboardLayout />}>
+            <Route index element={<PaymentsPage />} />
+          </Route>
+
+          <Route path="/payments/success" element={<DashboardLayout />}>
+            <Route index element={<PaymentSuccessPage />} />
+          </Route>
+
+          <Route path="/payments/cancel" element={<DashboardLayout />}>
+            <Route index element={<PaymentCancelPage />} />
+          </Route>
           <Route path="/messages" element={<DashboardLayout />}>
             <Route index element={<MessagesPage />} />
           </Route>

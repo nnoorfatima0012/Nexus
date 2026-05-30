@@ -135,6 +135,41 @@ export interface NexusDocument {
   updatedAt: string;
 }
 
+export interface Wallet {
+  _id: string;
+  user: string;
+  balance: number;
+  currency: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface TransactionUser {
+  _id: string;
+  name: string;
+  email: string;
+  role: UserRole;
+  avatarUrl: string;
+}
+
+export interface Transaction {
+  _id: string;
+  type: "deposit" | "withdraw" | "transfer";
+  amount: number;
+  currency: string;
+  status: "pending" | "completed" | "failed";
+  provider: "stripe" | "paypal_mock" | "wallet";
+  fromUser: TransactionUser | null;
+  toUser: TransactionUser | null;
+  note: string;
+  failureReason: string;
+  reference: string;
+  stripeSessionId?: string;
+  stripePaymentIntentId?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface AuthContextType {
   user: User | null;
   login: (email: string, password: string, role: UserRole) => Promise<void>;
