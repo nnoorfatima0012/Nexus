@@ -10,12 +10,22 @@ const userRoutes = require("./modules/users/user.routes");
 const meetingRoutes = require("./modules/meetings/meeting.routes");
 const documentRoutes = require("./modules/documents/document.routes");
 
+const paymentRoutes = require("./modules/payments/payment.routes");
+const { stripeWebhook } = require("./modules/payments/payment.controller");
+
 const app = express();
 
 const allowedOrigins = [
   "http://localhost:5173",
   process.env.CLIENT_URL,
 ].filter(Boolean);
+
+
+app.post(
+  "/api/payments/stripe/webhook",
+  express.raw({ type: "application/json" }),
+  stripeWebhook
+);
 
 app.use(
   cors({
@@ -33,6 +43,7 @@ app.use(
   })
 );
 
+
 app.use(express.json());
 app.use(cookieParser());
 app.use(morgan("dev"));
@@ -48,5 +59,6 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/meetings", meetingRoutes);
 app.use("/api/documents", documentRoutes);
+app.use("/api/payments", paymentRoutes);
 
 module.exports = app;
