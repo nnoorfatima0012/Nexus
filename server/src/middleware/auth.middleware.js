@@ -1,4 +1,48 @@
-//server/src/middleware/auth.middleware.js
+// //server/src/middleware/auth.middleware.js
+// const jwt = require("jsonwebtoken");
+// const User = require("../modules/users/user.model");
+
+// const protect = async (req, res, next) => {
+//   try {
+//     let token;
+
+//     if (
+//       req.headers.authorization &&
+//       req.headers.authorization.startsWith("Bearer")
+//     ) {
+//       token = req.headers.authorization.split(" ")[1];
+//     }
+
+//     if (!token) {
+//       return res.status(401).json({
+//         success: false,
+//         message: "Not authorized, token missing"
+//       });
+//     }
+
+//     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+//     const user = await User.findById(decoded.id).select("-password");
+
+//     if (!user) {
+//       return res.status(401).json({
+//         success: false,
+//         message: "User not found"
+//       });
+//     }
+
+//     req.user = user;
+//     next();
+//   } catch (error) {
+//     return res.status(401).json({
+//       success: false,
+//       message: "Not authorized, token failed"
+//     });
+//   }
+// };
+
+// module.exports = { protect };
+
 const jwt = require("jsonwebtoken");
 const User = require("../modules/users/user.model");
 
@@ -16,7 +60,7 @@ const protect = async (req, res, next) => {
     if (!token) {
       return res.status(401).json({
         success: false,
-        message: "Not authorized, token missing"
+        message: "Not authorized, token missing",
       });
     }
 
@@ -27,7 +71,7 @@ const protect = async (req, res, next) => {
     if (!user) {
       return res.status(401).json({
         success: false,
-        message: "User not found"
+        message: "User not found",
       });
     }
 
@@ -36,9 +80,22 @@ const protect = async (req, res, next) => {
   } catch (error) {
     return res.status(401).json({
       success: false,
-      message: "Not authorized, token failed"
+      message: "Not authorized, token failed",
     });
   }
 };
 
-module.exports = { protect };
+const authorizeRoles = (...roles) => {
+  return (req, res, next) => {
+    if (!req.user || !roles.includes(req.user.role)) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not allowed to access this route",
+      });
+    }
+
+    next();
+  };
+};
+
+module.exports = { protect, authorizeRoles };

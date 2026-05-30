@@ -5,6 +5,13 @@ const cors = require("cors");
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
 
+const helmet = require("helmet");
+
+const {
+  generalLimiter,
+  sanitizeRequestBody,
+} = require("./middleware/security.middleware");
+
 const authRoutes = require("./modules/auth/auth.routes");
 const userRoutes = require("./modules/users/user.routes");
 const meetingRoutes = require("./modules/meetings/meeting.routes");
@@ -44,7 +51,10 @@ app.use(
 );
 
 
+app.use(helmet());
+app.use(generalLimiter);
 app.use(express.json());
+app.use(sanitizeRequestBody);
 app.use(cookieParser());
 app.use(morgan("dev"));
 
