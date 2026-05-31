@@ -182,3 +182,34 @@ export interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
 }
+
+
+export interface NotificationUser {
+  _id: string;
+  name: string;
+  email: string;
+  role: UserRole;
+  avatarUrl: string;
+}
+
+export interface NexusNotification {
+  _id: string;
+  recipient: NotificationUser;
+  sender: NotificationUser | null;
+  type:
+    | "meeting_request"
+    | "meeting_accepted"
+    | "meeting_rejected"
+    | "meeting_cancelled"
+    | "document_uploaded"
+    | "document_signed"
+    | "payment_received"
+    | "system";
+  title: string;
+  message: string;
+  entityType: "meeting" | "document" | "payment" | "user" | "system";
+  entityId: string | null;
+  isRead: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
