@@ -1,5 +1,17 @@
 export type UserRole = "entrepreneur" | "investor";
 
+// export interface User {
+//   id: string;
+//   name: string;
+//   email: string;
+//   role: UserRole;
+//   avatarUrl: string;
+//   bio: string;
+//   location?: string;
+//   isOnline?: boolean;
+//   createdAt: string;
+// }
+
 export interface User {
   id: string;
   name: string;
@@ -9,6 +21,7 @@ export interface User {
   bio: string;
   location?: string;
   isOnline?: boolean;
+  twoFactorEnabled?: boolean;
   createdAt: string;
 }
 
@@ -170,15 +183,35 @@ export interface Transaction {
   updatedAt: string;
 }
 
+// export interface AuthContextType {
+//   user: User | null;
+//   login: (email: string, password: string, role: UserRole) => Promise<void>;
+//   register: (
+//     name: string,
+//     email: string,
+//     password: string,
+//     role: UserRole,
+//   ) => Promise<void>;
+//   logout: () => void;
+//   forgotPassword: (email: string) => Promise<void>;
+//   resetPassword: (token: string, newPassword: string) => Promise<void>;
+//   updateProfile: (userId: string, updates: Partial<User>) => Promise<void>;
+//   isAuthenticated: boolean;
+//   isLoading: boolean;
+// }
+
 export interface AuthContextType {
   user: User | null;
-  login: (email: string, password: string, role: UserRole) => Promise<void>;
+  login: (email: string, password: string, role: UserRole) => Promise<any>;
   register: (
     name: string,
     email: string,
     password: string,
     role: UserRole,
   ) => Promise<void>;
+  verifyTwoFactorLogin: (tempUserId: string, otpCode: string) => Promise<void>;
+  enableTwoFactor: () => Promise<void>;
+  disableTwoFactor: () => Promise<void>;
   logout: () => void;
   forgotPassword: (email: string) => Promise<void>;
   resetPassword: (token: string, newPassword: string) => Promise<void>;
