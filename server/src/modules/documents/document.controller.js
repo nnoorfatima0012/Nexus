@@ -3,7 +3,7 @@ const streamifier = require("streamifier");
 const cloudinary = require("../../config/cloudinary");
 const Document = require("./document.model");
 const User = require("../users/user.model");
-
+const { createNotification } = require("../notifications/notification.service");
 const populateDocument = [
   { path: "uploadedBy", select: "name email role avatarUrl" },
   { path: "relatedUser", select: "name email role avatarUrl" },
@@ -54,12 +54,6 @@ const uploadDocument = async (req, res) => {
       }
     }
 
-    // const result = await uploadBufferToCloudinary(uploadedFile.buffer, {
-    //   folder: "nexus/documents",
-    //   resource_type: "auto",
-    //   use_filename: true,
-    //   unique_filename: true,
-    // });
     const result = await uploadBufferToCloudinary(uploadedFile.buffer, {
       folder: "nexus/documents",
       resource_type: "raw",
@@ -82,6 +76,18 @@ const uploadDocument = async (req, res) => {
       relatedUser: relatedUser || null,
       version: latestVersion ? latestVersion.version + 1 : 1,
     });
+
+    if (document.relatedUser) {
+      await createNotification({
+        recipient: document.relatedUser,
+        sender: req.user._id,
+        type: "document_uploaded",
+        title: "New document shared",
+        message: `${req.user.name} uploaded a document for you: ${document.title}`,
+        entityType: "document",
+        entityId: document._id,
+      });
+    }
 
     const populatedDocument = await Document.findById(document._id).populate(
       populateDocument,
@@ -255,6 +261,16 @@ const signDocument = async (req, res) => {
     document.status = "signed";
 
     await document.save();
+
+    await createNotification({
+      recipient: document.uploadedBy,
+      sender: req.user._id,
+      type: "document_signed",
+      title: "Document signed",
+      message: `${req.user.name} signed your document: ${document.title}`,
+      entityType: "document",
+      entityId: document._id,
+    });
 
     const populatedDocument = await Document.findById(document._id).populate(
       populateDocument,

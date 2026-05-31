@@ -7,6 +7,8 @@ const User = require("../users/user.model");
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
+const { createNotification } = require("../notifications/notification.service");
+
 const populateTransaction = [
   { path: "fromUser", select: "name email role avatarUrl" },
   { path: "toUser", select: "name email role avatarUrl" },
@@ -57,7 +59,8 @@ const completeStripeDeposit = async (transactionId, stripeSession) => {
 
   const wallet = await getOrCreateWallet(transaction.toUser);
 
-  wallet.balance = Math.round((wallet.balance + transaction.amount) * 100) / 100;
+  wallet.balance =
+    Math.round((wallet.balance + transaction.amount) * 100) / 100;
   await wallet.save();
 
   transaction.status = "completed";
@@ -197,9 +200,8 @@ const confirmStripeCheckoutSession = async (req, res) => {
       });
     }
 
-    const transaction = await Transaction.findById(transactionId).populate(
-      populateTransaction
-    );
+    const transaction =
+      await Transaction.findById(transactionId).populate(populateTransaction);
 
     if (!transaction) {
       return res.status(404).json({
@@ -220,9 +222,8 @@ const confirmStripeCheckoutSession = async (req, res) => {
     }
 
     const wallet = await getOrCreateWallet(req.user._id);
-    const updatedTransaction = await Transaction.findById(transactionId).populate(
-      populateTransaction
-    );
+    const updatedTransaction =
+      await Transaction.findById(transactionId).populate(populateTransaction);
 
     return res.status(200).json({
       success: true,
@@ -289,9 +290,9 @@ const withdraw = async (req, res) => {
     transaction.status = "completed";
     await transaction.save();
 
-    const populatedTransaction = await Transaction.findById(transaction._id).populate(
-      populateTransaction
-    );
+    const populatedTransaction = await Transaction.findById(
+      transaction._id,
+    ).populate(populateTransaction);
 
     return res.status(200).json({
       success: true,
@@ -384,9 +385,21 @@ const transfer = async (req, res) => {
     transaction.status = "completed";
     await transaction.save();
 
-    const populatedTransaction = await Transaction.findById(transaction._id).populate(
-      populateTransaction
-    );
+    await createNotification({
+      recipient: toUser,
+      sender: req.user._id,
+      type: "payment_received",
+      title: "Payment received",
+      message: `${req.user.name} transferred ${senderWallet.currency} ${finalAmount.toFixed(
+        2,
+      )} to your wallet.`,
+      entityType: "payment",
+      entityId: transaction._id,
+    });
+
+    const populatedTransaction = await Transaction.findById(
+      transaction._id,
+    ).populate(populateTransaction);
 
     return res.status(200).json({
       success: true,
@@ -412,7 +425,7 @@ const stripeWebhook = async (req, res) => {
     event = stripe.webhooks.constructEvent(
       req.body,
       signature,
-      process.env.STRIPE_WEBHOOK_SECRET
+      process.env.STRIPE_WEBHOOK_SECRET,
     );
   } catch (error) {
     return res.status(400).send(`Webhook Error: ${error.message}`);
