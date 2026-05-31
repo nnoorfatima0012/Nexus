@@ -1,25 +1,4 @@
 // // //server/src/modules/auth/auth.routes.js
-
-// const express = require("express");
-// const { register, login, getMe } = require("./auth.controller");
-// const { protect } = require("../../middleware/auth.middleware");
-// const { authLimiter } = require("../../middleware/security.middleware");
-// const validateRequest = require("../../middleware/validate.middleware");
-// const {
-//   registerValidator,
-//   loginValidator,
-// } = require("../../validators/auth.validators");
-
-// const router = express.Router();
-
-// router.post("/register", authLimiter, registerValidator, validateRequest, register);
-// router.post("/login", authLimiter, loginValidator, validateRequest, login);
-// router.get("/me", protect, getMe);
-
-// module.exports = router;
-
-
-// // //server/src/modules/auth/auth.routes.js
 const express = require("express");
 
 const {
@@ -28,6 +7,9 @@ const {
   verifyLoginOtp,
   enableTwoFactor,
   disableTwoFactor,
+  forgotPassword,
+  resetPassword,
+  changePassword,
   getMe,
 } = require("./auth.controller");
 
@@ -41,8 +23,18 @@ const {
 
 const router = express.Router();
 
-router.post("/register", authLimiter, registerValidator, validateRequest, register);
+router.post(
+  "/register",
+  authLimiter,
+  registerValidator,
+  validateRequest,
+  register,
+);
 router.post("/login", authLimiter, loginValidator, validateRequest, login);
+
+router.post("/forgot-password", authLimiter, forgotPassword);
+router.post("/reset-password", authLimiter, resetPassword);
+router.post("/change-password", protect, changePassword);
 
 router.post("/2fa/verify-login", authLimiter, verifyLoginOtp);
 router.post("/2fa/enable", protect, enableTwoFactor);

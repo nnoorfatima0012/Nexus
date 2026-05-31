@@ -8,6 +8,9 @@ import {
   verifyLoginOtp,
   enableTwoFactorAuth,
   disableTwoFactorAuth,
+  forgotPasswordRequest,
+  resetPasswordRequest,
+  changePasswordRequest,
 } from "../services/authService";
 import toast from "react-hot-toast";
 import { updateCurrentUserProfile } from "../services/userService";
@@ -113,54 +116,33 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  // Mock forgot password function
+  // forgot password function
   const forgotPassword = async (email: string): Promise<void> => {
     try {
-      // Simulate API call delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Check if user exists
-      const user = users.find((u) => u.email === email);
-      if (!user) {
-        throw new Error("No account found with this email");
-      }
-
-      // Generate reset token (in a real app, this would be a secure token)
-      const resetToken = Math.random().toString(36).substring(2, 15);
-      localStorage.setItem(RESET_TOKEN_KEY, resetToken);
-
-      // In a real app, this would send an email
+      await forgotPasswordRequest(email);
       toast.success("Password reset instructions sent to your email");
-    } catch (error) {
-      toast.error((error as Error).message);
-      throw error;
+    } catch (error: any) {
+      const message =
+        error.response?.data?.message || "Failed to send reset email";
+      toast.error(message);
+      throw new Error(message);
     }
   };
 
-  // Mock reset password function
+  //  reset password function
   const resetPassword = async (
     token: string,
     newPassword: string,
   ): Promise<void> => {
     try {
-      // Simulate API call delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Verify token
-      const storedToken = localStorage.getItem(RESET_TOKEN_KEY);
-      if (token !== storedToken) {
-        throw new Error("Invalid or expired reset token");
-      }
-
-      // In a real app, this would update the user's password in the database
-      localStorage.removeItem(RESET_TOKEN_KEY);
+      await resetPasswordRequest(token, newPassword);
       toast.success("Password reset successfully");
-    } catch (error) {
-      toast.error((error as Error).message);
-      throw error;
+    } catch (error: any) {
+      const message = error.response?.data?.message || "Password reset failed";
+      toast.error(message);
+      throw new Error(message);
     }
   };
-
   // Logout function
   const logout = (): void => {
     setUser(null);
@@ -242,17 +224,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  // const value = {
-  //   user,
-  //   login,
-  //   register,
-  //   logout,
-  //   forgotPassword,
-  //   resetPassword,
-  //   updateProfile,
-  //   isAuthenticated: !!user,
-  //   isLoading,
-  // };
+  const changePassword = async (
+    currentPassword: string,
+    newPassword: string,
+  ): Promise<void> => {
+    try {
+      await changePasswordRequest(currentPassword, newPassword);
+      toast.success("Password changed successfully");
+    } catch (error: any) {
+      const message = error.response?.data?.message || "Password change failed";
+      toast.error(message);
+      throw new Error(message);
+    }
+  };
+
   const value = {
     user,
     login,
@@ -263,6 +248,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     logout,
     forgotPassword,
     resetPassword,
+    changePassword,
     updateProfile,
     isAuthenticated: !!user,
     isLoading,

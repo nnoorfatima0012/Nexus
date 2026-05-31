@@ -25,25 +25,6 @@ export const LoginPage: React.FC = () => {
   const { login, verifyTwoFactorLogin } = useAuth();
   const navigate = useNavigate();
 
-  // const handleSubmit = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   setError(null);
-  //   setIsLoading(true);
-
-  //   try {
-  //     await login(email, password, role);
-  //     // Redirect based on user role
-  //     navigate(
-  //       role === "entrepreneur"
-  //         ? "/dashboard/entrepreneur"
-  //         : "/dashboard/investor",
-  //     );
-  //   } catch (err) {
-  //     setError((err as Error).message);
-  //     setIsLoading(false);
-  //   }
-  // };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -222,12 +203,12 @@ export const LoginPage: React.FC = () => {
               </div>
 
               <div className="text-sm">
-                <a
-                  href="#"
+                <Link
+                  to="/forgot-password"
                   className="font-medium text-primary-600 hover:text-primary-500"
                 >
                   Forgot your password?
-                </a>
+                </Link>
               </div>
             </div>
 
@@ -256,7 +237,7 @@ export const LoginPage: React.FC = () => {
               isLoading={isLoading}
               leftIcon={<LogIn size={18} />}
             >
-              {otpStep ? 'Verify OTP' : 'Sign in'}
+              {otpStep ? "Verify OTP" : "Sign in"}
             </Button>
           </form>
 
