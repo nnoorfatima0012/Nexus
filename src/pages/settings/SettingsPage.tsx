@@ -8,11 +8,24 @@ import { Avatar } from "../../components/ui/Avatar";
 import { useAuth } from "../../context/AuthContext";
 
 export const SettingsPage: React.FC = () => {
-  const { user, updateProfile, enableTwoFactor, disableTwoFactor } = useAuth();
+  const {
+    user,
+    updateProfile,
+    enableTwoFactor,
+    disableTwoFactor,
+    changePassword,
+  } = useAuth();
 
   const [isSaving, setIsSaving] = useState(false);
 
   const [isUpdating2FA, setIsUpdating2FA] = useState(false);
+
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
 
   const [formData, setFormData] = useState({
     name: user?.name || "",
@@ -163,6 +176,38 @@ export const SettingsPage: React.FC = () => {
       }
     } finally {
       setIsUpdating2FA(false);
+    }
+  };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    setPasswordData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleChangePassword = async () => {
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      return;
+    }
+
+    setIsChangingPassword(true);
+
+    try {
+      await changePassword(
+        passwordData.currentPassword,
+        passwordData.newPassword,
+      );
+
+      setPasswordData({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+    } finally {
+      setIsChangingPassword(false);
     }
   };
 
@@ -621,12 +666,51 @@ export const SettingsPage: React.FC = () => {
                 </h3>
 
                 <div className="space-y-4">
-                  <Input label="Current Password" type="password" />
-                  <Input label="New Password" type="password" />
-                  <Input label="Confirm New Password" type="password" />
+                  <Input
+                    label="Current Password"
+                    type="password"
+                    name="currentPassword"
+                    value={passwordData.currentPassword}
+                    onChange={handlePasswordChange}
+                  />
+
+                  <Input
+                    label="New Password"
+                    type="password"
+                    name="newPassword"
+                    value={passwordData.newPassword}
+                    onChange={handlePasswordChange}
+                  />
+
+                  <Input
+                    label="Confirm New Password"
+                    type="password"
+                    name="confirmPassword"
+                    value={passwordData.confirmPassword}
+                    onChange={handlePasswordChange}
+                    error={
+                      passwordData.confirmPassword &&
+                      passwordData.newPassword !== passwordData.confirmPassword
+                        ? "Passwords do not match"
+                        : undefined
+                    }
+                  />
 
                   <div className="flex justify-end">
-                    <Button>Update Password</Button>
+                    <Button
+                      type="button"
+                      onClick={handleChangePassword}
+                      isLoading={isChangingPassword}
+                      disabled={
+                        !passwordData.currentPassword ||
+                        !passwordData.newPassword ||
+                        !passwordData.confirmPassword ||
+                        passwordData.newPassword !==
+                          passwordData.confirmPassword
+                      }
+                    >
+                      Update Password
+                    </Button>
                   </div>
                 </div>
               </div>
