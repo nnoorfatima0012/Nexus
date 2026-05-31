@@ -20,7 +20,7 @@ const { Server } = require("socket.io");
 const app = require("./src/app");
 const connectDB = require("./src/config/db");
 const setupVideoSocket = require("./src/modules/video/socket");
-
+const setupMessageSocket = require("./src/modules/messages/message.socket");
 const PORT = process.env.PORT || 5000;
 
 connectDB();
@@ -40,7 +40,10 @@ const io = new Server(server, {
   },
 });
 
+app.set("io", io);
+
 setupVideoSocket(io);
+setupMessageSocket(io);
 
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
