@@ -204,6 +204,7 @@ export interface NexusNotification {
     | "document_uploaded"
     | "document_signed"
     | "payment_received"
+    | "message_received"
     | "system";
   title: string;
   message: string;
@@ -211,5 +212,32 @@ export interface NexusNotification {
   entityId: string | null;
   isRead: boolean;
   createdAt: string;
+  updatedAt: string;
+}
+
+export interface MessageUser {
+  _id: string;
+  name: string;
+  email: string;
+  role: UserRole;
+  avatarUrl: string;
+  isOnline?: boolean;
+}
+
+export interface NexusMessage {
+  _id: string;
+  sender: MessageUser;
+  receiver: MessageUser;
+  content: string;
+  isRead: boolean;
+  readAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface NexusConversation {
+  user: MessageUser;
+  lastMessage: NexusMessage;
+  unreadCount: number;
   updatedAt: string;
 }

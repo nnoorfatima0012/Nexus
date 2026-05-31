@@ -25,6 +25,7 @@ const notificationSchema = new mongoose.Schema(
         "document_uploaded",
         "document_signed",
         "payment_received",
+        "message_received",
         "system",
       ],
       default: "system",

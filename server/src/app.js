@@ -19,6 +19,8 @@ const documentRoutes = require("./modules/documents/document.routes");
 
 const notificationRoutes = require("./modules/notifications/notification.routes");
 
+const messageRoutes = require("./modules/messages/message.routes");
+
 const paymentRoutes = require("./modules/payments/payment.routes");
 const { stripeWebhook } = require("./modules/payments/payment.controller");
 
@@ -73,5 +75,6 @@ app.use("/api/meetings", meetingRoutes);
 app.use("/api/documents", documentRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/notifications", notificationRoutes);
+app.use("/api/messages", messageRoutes);
 
 module.exports = app;
