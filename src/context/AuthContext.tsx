@@ -12,6 +12,8 @@ import {
   resetPasswordRequest,
   changePasswordRequest,
 } from "../services/authService";
+
+import { disconnectSocket } from "../services/socketService";
 import toast from "react-hot-toast";
 import { updateCurrentUserProfile } from "../services/userService";
 
@@ -79,6 +81,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       localStorage.setItem(TOKEN_STORAGE_KEY, data.token);
       localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(data.user));
 
+      // Reset old socket so new login uses latest token
+      disconnectSocket();
+
       setUser(data.user);
       toast.success("Successfully logged in!");
       return data;
@@ -104,7 +109,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
       localStorage.setItem(TOKEN_STORAGE_KEY, data.token);
       localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(data.user));
-
+      disconnectSocket();
       setUser(data.user);
       toast.success("Account created successfully!");
     } catch (error: any) {
@@ -145,6 +150,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
   // Logout function
   const logout = (): void => {
+    // Disconnect socket before removing token
+    disconnectSocket();
     setUser(null);
     localStorage.removeItem(USER_STORAGE_KEY);
     localStorage.removeItem(TOKEN_STORAGE_KEY);
@@ -181,6 +188,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
       localStorage.setItem(TOKEN_STORAGE_KEY, data.token);
       localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(data.user));
+
+      // Reset old socket after OTP login
+      disconnectSocket();
 
       setUser(data.user);
       toast.success("Two-factor login successful!");
