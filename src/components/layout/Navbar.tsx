@@ -68,48 +68,6 @@ export const Navbar: React.FC = () => {
     },
   ];
 
-  // const mobileFeatureLinks =
-  //   user?.role === 'entrepreneur'
-  //     ? [
-  //         {
-  //           icon: <CircleDollarSign size={18} />,
-  //           text: 'Find Investors',
-  //           path: '/investors',
-  //         },
-  //         {
-  //           icon: <FileText size={18} />,
-  //           text: 'Documents',
-  //           path: '/documents',
-  //         },
-  //         {
-  //           icon: <CalendarDays size={18} />,
-  //           text: 'Meetings',
-  //           path: '/meetings',
-  //         },
-  //       ]
-  //     : [
-  //         {
-  //           icon: <Users size={18} />,
-  //           text: 'Find Startups',
-  //           path: '/entrepreneurs',
-  //         },
-  //         {
-  //           icon: <FileText size={18} />,
-  //           text: 'Deals',
-  //           path: '/deals',
-  //         },
-  //         {
-  //           icon: <FileText size={18} />,
-  //           text: 'Documents',
-  //           path: '/documents',
-  //         },
-  //         {
-  //           icon: <CalendarDays size={18} />,
-  //           text: 'Meetings',
-  //           path: '/meetings',
-  //         },
-  //       ];
-
   const mobileFeatureLinks =
     user?.role === "entrepreneur"
       ? [

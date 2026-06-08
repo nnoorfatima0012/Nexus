@@ -22,6 +22,10 @@ const notificationSchema = new mongoose.Schema(
         "meeting_accepted",
         "meeting_rejected",
         "meeting_cancelled",
+        "collaboration_request",
+        "collaboration_accepted",
+        "collaboration_rejected",
+        "collaboration_cancelled",
         "document_uploaded",
         "document_signed",
         "payment_received",
@@ -45,7 +49,7 @@ const notificationSchema = new mongoose.Schema(
 
     entityType: {
       type: String,
-      enum: ["meeting", "document", "payment", "user", "system"],
+      enum: ["meeting", "collaboration", "document", "payment", "user", "system"],
       default: "system",
     },
 

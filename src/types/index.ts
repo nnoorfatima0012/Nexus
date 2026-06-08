@@ -1,6 +1,5 @@
 export type UserRole = "entrepreneur" | "investor";
 
-
 export interface User {
   id: string;
   name: string;
@@ -98,6 +97,30 @@ export interface CollaborationRequest {
   createdAt: string;
 }
 
+export interface CollaborationUser {
+  _id: string;
+  name: string;
+  email: string;
+  role: UserRole;
+  avatarUrl: string;
+  isOnline?: boolean;
+  startupName?: string;
+  industry?: string;
+  location?: string;
+  investmentInterests?: string[];
+  investmentStage?: string[];
+}
+
+export interface NexusCollaboration {
+  _id: string;
+  sender: CollaborationUser;
+  receiver: CollaborationUser;
+  message: string;
+  status: "pending" | "accepted" | "rejected" | "cancelled";
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface DocumentUser {
   _id: string;
   name: string;
@@ -161,7 +184,6 @@ export interface Transaction {
   updatedAt: string;
 }
 
-
 export interface AuthContextType {
   user: User | null;
   login: (email: string, password: string, role: UserRole) => Promise<any>;
@@ -177,12 +199,14 @@ export interface AuthContextType {
   logout: () => void;
   forgotPassword: (email: string) => Promise<void>;
   resetPassword: (token: string, newPassword: string) => Promise<void>;
-  changePassword: (currentPassword: string, newPassword: string) => Promise<void>;
+  changePassword: (
+    currentPassword: string,
+    newPassword: string,
+  ) => Promise<void>;
   updateProfile: (userId: string, updates: Partial<User>) => Promise<void>;
   isAuthenticated: boolean;
   isLoading: boolean;
 }
-
 
 export interface NotificationUser {
   _id: string;
@@ -201,6 +225,10 @@ export interface NexusNotification {
     | "meeting_accepted"
     | "meeting_rejected"
     | "meeting_cancelled"
+    | "collaboration_request"
+    | "collaboration_accepted"
+    | "collaboration_rejected"
+    | "collaboration_cancelled"
     | "document_uploaded"
     | "document_signed"
     | "payment_received"
@@ -208,7 +236,7 @@ export interface NexusNotification {
     | "system";
   title: string;
   message: string;
-  entityType: "meeting" | "document" | "payment" | "user" | "system";
+  entityType: "meeting" | "collaboration" |"document" | "payment" | "user" | "system";
   entityId: string | null;
   isRead: boolean;
   createdAt: string;
